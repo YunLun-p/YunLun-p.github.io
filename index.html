@@ -3,20 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>加载中...</title>
+<title>Chating...</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#1e1e1e;color:#fff;font-family:'Segoe UI',sans-serif;height:100vh;display:flex;justify-content:center;align-items:center}
 
-/* ===== 登录界面 ===== */
-.login-box{width:340px;background:#2a2a2a;border-radius:14px;padding:32px 28px;box-shadow:0 0 30px rgba(0,0,0,.5);text-align:center}
-.login-box h1{font-size:22px;margin-bottom:6px}
-.login-box p{font-size:13px;color:#888;margin-bottom:20px}
-.login-box input{width:100%;padding:10px 14px;margin-bottom:14px;border:none;border-radius:8px;background:#222;color:#fff;font-size:15px;text-align:center}
-.login-box input:focus{outline:2px solid #0078d4}
-.login-box button{width:100%;padding:10px;border:none;border-radius:8px;background:#0078d4;color:#fff;font-size:15px;cursor:pointer;font-weight:500}
-.login-box button:hover{background:#005fa3}
-.login-box .err{color:#e74c3c;font-size:13px;margin-top:10px;min-height:20px}
+/* ===== 登录/注册界面 ===== */
+.auth-box{width:340px;background:#2a2a2a;border-radius:14px;padding:32px 28px;box-shadow:0 0 30px rgba(0,0,0,.5);text-align:center}
+.auth-box h1{font-size:22px;margin-bottom:6px}
+.auth-box p{font-size:13px;color:#888;margin-bottom:20px}
+.auth-box input{width:100%;padding:10px 14px;margin-bottom:12px;border:none;border-radius:8px;background:#222;color:#fff;font-size:15px;text-align:center}
+.auth-box input:focus{outline:2px solid #0078d4}
+.auth-box button{width:100%;padding:10px;border:none;border-radius:8px;background:#0078d4;color:#fff;font-size:15px;cursor:pointer;font-weight:500;margin-bottom:10px}
+.auth-box button:hover{background:#005fa3}
+.auth-box .switch{font-size:13px;color:#888;cursor:pointer}
+.auth-box .switch:hover{color:#0078d4}
+.auth-box .err{color:#e74c3c;font-size:13px;margin-top:8px;min-height:20px}
 
 /* ===== 聊天界面 ===== */
 .chat{width:95%;max-width:600px;height:90vh;background:#2a2a2a;border-radius:12px;display:none;flex-direction:column;overflow:hidden}
@@ -40,13 +42,14 @@ button.send:hover{background:#005fa3}
 <body>
 
 <!-- 登录界面 -->
-<div class="login-box" id="loginBox">
-  <h1>💬 沄轮家聊天室</h1>
-  <p>请输入用户名和密码</p>
+<div class="auth-box" id="loginBox">
+  <h1>💬 聊天室</h1>
+  <p id="authTitle">请输入用户名和密码</p>
   <input id="loginUser" placeholder="用户名" autocomplete="off">
   <input id="loginPass" type="password" placeholder="密码">
-  <button onclick="doLogin()">登 录</button>
-  <div class="err" id="loginErr"></div>
+  <button id="authBtn" onclick="doLogin()">登 录</button>
+  <div class="switch" onclick="toggleAuth()">没有账号？点击注册</div>
+  <div class="err" id="authErr"></div>
 </div>
 
 <!-- 聊天界面 -->
@@ -61,7 +64,7 @@ button.send:hover{background:#005fa3}
   <div class="msgs" id="msgs"></div>
   <div class="input">
     <input id="text" placeholder="说点什么…" onkeydown="if(event.key==='Enter')send()">
-    <button class="send" onclick="send()">发送</button>
+    <button class="send" id="sendBtn" onclick="send()">发送</button>
   </div>
 </div>
 
@@ -73,49 +76,96 @@ const _t2="Osk1ukEskSXnSUJ0PKWuu";  // ← 第三段
 const TOKEN=_t0+_t1+_t2;
 const REPO="YunLun-p/YunLun-p.github.io";
 const BRANCH="data";
-const DATA_DIR="Data";  // 聊天记录目录
-const USERS_DIR="Users"; // 用户目录
+const DATA_DIR="Data";
+const USERS_DIR="Users";
 // ==================
 
 const msgsDiv=document.getElementById("msgs");
 const textInput=document.getElementById("text");
-const loginErr=document.getElementById("loginErr");
+const authErr=document.getElementById("authErr");
 
 // ====== 工具函数 ======
 function utoa(s){return btoa(unescape(encodeURIComponent(s)))}
 function atou(s){return decodeURIComponent(escape(atob(s)))}
 
+// ====== 登录/注册模式切换 ======
+let isRegister=false;
+
+function toggleAuth(){
+  isRegister=!isRegister;
+  document.getElementById("authTitle").textContent=isRegister?"设置用户名和密码":"请输入用户名和密码";
+  document.getElementById("authBtn").textContent=isRegister?"注 册":"登 录";
+  document.querySelector(".switch").textContent=isRegister?"已有账号？点击登录":"没有账号？点击注册";
+  authErr.textContent="";
+}
+
 // ====== 登录逻辑 ======
 async function doLogin(){
   const user=document.getElementById("loginUser").value.trim();
   const pass=document.getElementById("loginPass").value.trim();
-  if(!user||!pass){loginErr.textContent="请输入用户名和密码";return}
+  if(!user||!pass){authErr.textContent="请输入用户名和密码";return}
 
   try {
-    // 读取 Users/{user}/Password.md
-    const url=`https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}/Password.md?ref=${BRANCH}`;
-    const res=await fetch(url,{
-      headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
-    });
+    if(isRegister){
+      // ===== 注册 =====
+      // 1. 检查用户是否已存在
+      const checkUrl=`https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}?ref=${BRANCH}`;
+      const checkRes=await fetch(checkUrl,{
+        headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
+      });
+      if(checkRes.status!==404){
+        authErr.textContent="用户名已存在，请换一个";
+        return;
+      }
 
-    if(res.status===404){
-      loginErr.textContent="用户不存在";
-      return;
+      // 2. 创建 Password.md
+      const passUrl=`https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}/Password.md`;
+      const createRes=await fetch(passUrl,{
+        method:"PUT",
+        headers:{Authorization:`token ${TOKEN}`,"Content-Type":"application/json","User-Agent":"YunLun-Family-Chat"},
+        body:JSON.stringify({
+          message:`register ${user}`,
+          content:utoa(pass),
+          branch:BRANCH
+        })
+      });
+
+      if(!createRes.ok){
+        authErr.textContent="注册失败，请稍后重试";
+        console.error(await createRes.text());
+        return;
+      }
+
+      authErr.style.color="#2ecc71";
+      authErr.textContent="注册成功！正在跳转…";
+      // 自动登录
+      sessionStorage.setItem("chat_user",user);
+      setTimeout(()=>showChat(user),500);
+    }else{
+      // ===== 登录 =====
+      const url=`https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}/Password.md?ref=${BRANCH}`;
+      const res=await fetch(url,{
+        headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
+      });
+
+      if(res.status===404){
+        authErr.textContent="用户不存在";
+        return;
+      }
+
+      const data=await res.json();
+      const savedPass=atou(data.content).trim();
+
+      if(savedPass!==pass){
+        authErr.textContent="密码错误";
+        return;
+      }
+
+      sessionStorage.setItem("chat_user",user);
+      showChat(user);
     }
-
-    const data=await res.json();
-    const savedPass=atou(data.content).trim();
-
-    if(savedPass!==pass){
-      loginErr.textContent="密码错误";
-      return;
-    }
-
-    // 登录成功
-    sessionStorage.setItem("chat_user",user);
-    showChat(user);
-  } catch(e){
-    loginErr.textContent="登录失败，请检查网络";
+  }catch(e){
+    authErr.textContent="操作失败，请检查网络";
     console.error(e);
   }
 }
@@ -132,7 +182,7 @@ function showChat(user){
   loadToday();
 }
 
-// 支持回车登录
+// 支持回车
 document.addEventListener("keydown",function(e){
   if(e.key==="Enter"&&document.getElementById("loginBox").style.display!=="none"){
     doLogin();
@@ -177,8 +227,16 @@ function showMsg(nick,text,time,isMe){
 async function send(){
   const u=sessionStorage.getItem("chat_user");
   if(!u)return;
+
+  const btn=document.getElementById("sendBtn");
+  if(btn.disabled)return;
+
   const txt=textInput.value.trim();
   if(!txt)return;
+
+  btn.disabled=true;
+  btn.textContent="发送中…";
+
   const now=new Date();
   const time=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
   const line=`- [${time}] [${u}]: ${txt}\n`;
@@ -199,12 +257,22 @@ async function send(){
       sha=j.sha;
       content=atou(j.content)+line;
     }
-    await fetch(url,{
+    const putRes=await fetch(url,{
       method:"PUT",
       headers:{Authorization:`token ${TOKEN}`,"Content-Type":"application/json","User-Agent":"YunLun-Family-Chat"},
       body:JSON.stringify({message:`chat ${y}/${m}/${d} ${time}`,content:utoa(content),sha,branch:BRANCH})
     });
-  }catch(e){console.error("发送失败",e)}
+
+    if(!putRes.ok){
+      throw new Error("GitHub API 写入失败");
+    }
+  }catch(e){
+    alert("发送失败，请检查网络或稍后重试");
+    console.error("发送失败",e);
+  }finally{
+    btn.disabled=false;
+    btn.textContent="发送";
+  }
 }
 
 // ====== 自动登录 ======
