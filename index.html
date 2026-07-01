@@ -4,128 +4,212 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>加载中...</title>
-<script>
-(function(){
-  const PASS = "271828";
-  const input = prompt("Password：");
-  if (input === null || input !== PASS) {
-    document.body.style.background = "#1e1e1e";
-    document.body.innerHTML = "<h1 style='color:#fff;text-align:center;margin-top:40vh'>禁止访问</h1>";
-    throw new Error("denied");
-  }
-})();
-</script>
 <style>
-body{background:#1e1e1e;color:#fff;font-family:'Segoe UI',sans-serif;display:flex;justify-content:center;padding-top:20px;margin:0}
-.chat{width:95%;max-width:600px;height:90vh;background:#2a2a2a;border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
-.header{padding:14px;background:#333;text-align:center;font-size:18px;border-bottom:1px solid #444}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1e1e1e;color:#fff;font-family:'Segoe UI',sans-serif;height:100vh;display:flex;justify-content:center;align-items:center}
+
+/* ===== 登录界面 ===== */
+.login-box{width:340px;background:#2a2a2a;border-radius:14px;padding:32px 28px;box-shadow:0 0 30px rgba(0,0,0,.5);text-align:center}
+.login-box h1{font-size:22px;margin-bottom:6px}
+.login-box p{font-size:13px;color:#888;margin-bottom:20px}
+.login-box input{width:100%;padding:10px 14px;margin-bottom:14px;border:none;border-radius:8px;background:#222;color:#fff;font-size:15px;text-align:center}
+.login-box input:focus{outline:2px solid #0078d4}
+.login-box button{width:100%;padding:10px;border:none;border-radius:8px;background:#0078d4;color:#fff;font-size:15px;cursor:pointer;font-weight:500}
+.login-box button:hover{background:#005fa3}
+.login-box .err{color:#e74c3c;font-size:13px;margin-top:10px;min-height:20px}
+
+/* ===== 聊天界面 ===== */
+.chat{width:95%;max-width:600px;height:90vh;background:#2a2a2a;border-radius:12px;display:none;flex-direction:column;overflow:hidden}
+.header{padding:14px;background:#333;text-align:center;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444}
+.header .title{font-size:17px}
+.header .user-info{font-size:13px;color:#aaa}
+.header button{font-size:12px;padding:4px 10px;background:#555;border:none;border-radius:6px;color:#fff;cursor:pointer}
 .msgs{flex:1;padding:12px;overflow:auto;background:#222;line-height:1.6}
 .msg{margin:6px 0;padding:6px 10px;border-radius:6px;max-width:85%;word-break:break-word}
 .me{background:#0078d4;margin-left:auto}
-.other{background:#444;margin-right:auto}
+.other{background:#444}
 .nick{font-size:12px;color:#aaa;margin-bottom:2px}
 .input{display:flex;padding:10px;gap:8px;background:#333;border-top:1px solid #444}
-input{flex:1;padding:8px 12px;border:none;border-radius:6px;background:#222;color:#fff;font-size:14px;outline:none}
-input:first-child{flex:0 0 100px}
-button{padding:8px 16px;background:#0078d4;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px}
-button:hover{background:#005fa3}
+input{flex:1;padding:8px 12px;border:none;border-radius:6px;background:#222;color:#fff;font-size:14px}
+button.send{padding:8px 16px;background:#0078d4;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px}
+button.send:hover{background:#005fa3}
 .msgs::-webkit-scrollbar{width:5px}
 .msgs::-webkit-scrollbar-thumb{background:#555;border-radius:3px}
 </style>
 </head>
 <body>
-<div class="chat">
-<div class="header">💬聊天室</div>
-<div class="msgs" id="msgs"></div>
-<div class="input">
-<input id="nick" placeholder="昵称" value="家人">
-<input id="text" placeholder="说点什么…" onkeydown="if(event.key==='Enter')send()">
-<button onclick="send()">发送</button>
+
+<!-- 登录界面 -->
+<div class="login-box" id="loginBox">
+  <h1>💬 沄轮家聊天室</h1>
+  <p>请输入用户名和密码</p>
+  <input id="loginUser" placeholder="用户名" autocomplete="off">
+  <input id="loginPass" type="password" placeholder="密码">
+  <button onclick="doLogin()">登 录</button>
+  <div class="err" id="loginErr"></div>
 </div>
+
+<!-- 聊天界面 -->
+<div class="chat" id="chatBox">
+  <div class="header">
+    <div class="title">💬 聊天室</div>
+    <div class="user-info">
+      <span id="curUser"></span>
+      <button onclick="doLogout()">退出</button>
+    </div>
+  </div>
+  <div class="msgs" id="msgs"></div>
+  <div class="input">
+    <input id="text" placeholder="说点什么…" onkeydown="if(event.key==='Enter')send()">
+    <button class="send" onclick="send()">发送</button>
+  </div>
 </div>
 
 <script>
 // ====== 配置 ======
-const _t0="ghp_";               // ← 第一部分
-const _t1="Z2BwhirqwbwHeY";           // ← 第二部分
-const _t2="0Osk1ukEskSXnSUJ0PKWuu";    // ← 第三部分
-const TOKEN=_t0+_t1+_t2;        // 拼接完整 Token
-
+const _t0="ghp_";      // ← 换成你的 Token 第一段
+const _t1="Z2BwhirqwbwHeY0";  // ← 第二段
+const _t2="Osk1ukEskSXnSUJ0PKWuu";  // ← 第三段
+const TOKEN=_t0+_t1+_t2;
 const REPO="YunLun-p/YunLun-p.github.io";
 const BRANCH="data";
+const DATA_DIR="Data";  // 聊天记录目录
+const USERS_DIR="Users"; // 用户目录
 // ==================
 
 const msgsDiv=document.getElementById("msgs");
-const nickInput=document.getElementById("nick");
 const textInput=document.getElementById("text");
+const loginErr=document.getElementById("loginErr");
 
-// UTF-8 安全编解码
-function utoa(str){return btoa(unescape(encodeURIComponent(str)))}
-function atou(str){return decodeURIComponent(escape(atob(str)))}
+// ====== 工具函数 ======
+function utoa(s){return btoa(unescape(encodeURIComponent(s)))}
+function atou(s){return decodeURIComponent(escape(atob(s)))}
 
-// ====== 加载今天的聊天记录 ======
-async function loadToday(){
-  try{
-    const d=new Date();
-    const p=`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}.md`;
-    const r=await fetch(`https://api.github.com/repos/${REPO}/contents/${p}?ref=${BRANCH}`,{
+// ====== 登录逻辑 ======
+async function doLogin(){
+  const user=document.getElementById("loginUser").value.trim();
+  const pass=document.getElementById("loginPass").value.trim();
+  if(!user||!pass){loginErr.textContent="请输入用户名和密码";return}
+
+  try {
+    // 读取 Users/{user}/Password.md
+    const url=`https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}/Password.md?ref=${BRANCH}`;
+    const res=await fetch(url,{
       headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
     });
-    if(r.status===404)return;
-    const j=await r.json();
+
+    if(res.status===404){
+      loginErr.textContent="用户不存在";
+      return;
+    }
+
+    const data=await res.json();
+    const savedPass=atou(data.content).trim();
+
+    if(savedPass!==pass){
+      loginErr.textContent="密码错误";
+      return;
+    }
+
+    // 登录成功
+    sessionStorage.setItem("chat_user",user);
+    showChat(user);
+  } catch(e){
+    loginErr.textContent="登录失败，请检查网络";
+    console.error(e);
+  }
+}
+
+function doLogout(){
+  sessionStorage.removeItem("chat_user");
+  location.reload();
+}
+
+function showChat(user){
+  document.getElementById("loginBox").style.display="none";
+  document.getElementById("chatBox").style.display="flex";
+  document.getElementById("curUser").textContent=user;
+  loadToday();
+}
+
+// 支持回车登录
+document.addEventListener("keydown",function(e){
+  if(e.key==="Enter"&&document.getElementById("loginBox").style.display!=="none"){
+    doLogin();
+  }
+});
+
+// ====== 加载聊天记录 ======
+async function loadToday(){
+  const u=sessionStorage.getItem("chat_user");
+  if(!u)return;
+  const now=new Date();
+  const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
+  const path=`${DATA_DIR}/${y}/${m}/${d}.md`;
+  const url=`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
+
+  try {
+    const res=await fetch(url,{
+      headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
+    });
+    if(res.status===404)return;
+    const j=await res.json();
     const c=atou(j.content);
     c.split("\n").forEach(l=>{
       const m=l.match(/^- \[(\d{2}:\d{2})\] \[(.+?)\]: (.+)$/);
-      if(m)show(m[2],m[3],m[1]);
+      if(m)showMsg(m[2],m[3],m[1],false);
     });
-  }catch(e){console.error("加载聊天记录失败",e)}
+    msgsDiv.scrollTop=msgsDiv.scrollHeight;
+  }catch(e){console.error("加载失败",e)}
 }
 
 // ====== 显示消息 ======
-function show(nick,text,time){
+function showMsg(nick,text,time,isMe){
   const div=document.createElement("div");
-  div.className="msg "+(nick===nickInput.value?"me":"other");
-  div.innerHTML=`<div class="nick">${time?"["+time+"] ":""}${nick}</div>${text}`;
+  const cur=sessionStorage.getItem("chat_user");
+  div.className="msg "+(nick===cur?"me":"other");
+  div.innerHTML=`<div class="nick">${time} ${nick}</div>${text}`;
   msgsDiv.appendChild(div);
-  msgsDiv.scrollTop=msgsDiv.scrollHeight;
+  if(isMe)msgsDiv.scrollTop=msgsDiv.scrollHeight;
 }
 
 // ====== 发送消息 ======
 async function send(){
+  const u=sessionStorage.getItem("chat_user");
+  if(!u)return;
   const txt=textInput.value.trim();
   if(!txt)return;
-  const nick=nickInput.value.trim()||"家人";
   const now=new Date();
   const time=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
-  const line=`- [${time}] [${nick}]: ${txt}\n`;
-
-  show(nick,txt,time);
+  const line=`- [${time}] [${u}]: ${txt}\n`;
+  showMsg(u,txt,time,true);
   textInput.value="";
 
-  try{
-    const p=`${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}.md`;
-    const r=await fetch(`https://api.github.com/repos/${REPO}/contents/${p}?ref=${BRANCH}`,{
+  const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
+  const path=`${DATA_DIR}/${y}/${m}/${d}.md`;
+  const url=`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
+
+  try {
+    const res=await fetch(url,{
       headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
     });
     let sha=null,content=line;
-    if(r.status!==404){
-      const j=await r.json();
+    if(res.status!==404){
+      const j=await res.json();
       sha=j.sha;
       content=atou(j.content)+line;
     }
-    await fetch(`https://api.github.com/repos/${REPO}/contents/${p}?ref=${BRANCH}`,{
+    await fetch(url,{
       method:"PUT",
       headers:{Authorization:`token ${TOKEN}`,"Content-Type":"application/json","User-Agent":"YunLun-Family-Chat"},
-      body:JSON.stringify({message:`chat: ${time}`,content:utoa(content),sha,branch:BRANCH})
+      body:JSON.stringify({message:`chat ${y}/${m}/${d} ${time}`,content:utoa(content),sha,branch:BRANCH})
     });
-  }catch(e){
-    alert("发送失败，请检查网络或Token");
-    console.error("发送失败",e);
-  }
+  }catch(e){console.error("发送失败",e)}
 }
 
-// ====== 初始化 ======
-loadToday();
+// ====== 自动登录 ======
+const savedUser=sessionStorage.getItem("chat_user");
+if(savedUser){showChat(savedUser);}
 </script>
 </body>
 </html>
