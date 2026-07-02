@@ -180,6 +180,15 @@ function showChat(user){
   document.getElementById("chatBox").style.display="flex";
   document.getElementById("curUser").textContent=user;
   loadToday();
+
+  // ✅ 初始化消息条数
+  setTimeout(()=>{
+    const msgs=document.querySelectorAll(".msg");
+    lastLoadedCount=msgs.length;
+  },300);
+
+  // ✅ 每 8 秒拉一次新消息
+  setInterval(pollMessages,1000);
 }
 
 // 支持回车
@@ -212,7 +221,39 @@ async function loadToday(){
     msgsDiv.scrollTop=msgsDiv.scrollHeight;
   }catch(e){console.error("加载失败",e)}
 }
+// ====== 定时拉取新消息 ======
+let lastLoadedCount=0;
 
+async function pollMessages(){
+  const u=sessionStorage.getItem("chat_user");
+  if(!u)return;
+
+  const now=new Date();
+  const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
+  const path=`${DATA_DIR}/${y}/${m}/${d}.md`;
+  const url=`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
+
+  try {
+    const res=await fetch(url,{
+      headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
+    });
+    if(res.status===404)return;
+    const j=await res.json();
+    const c=atou(j.content);
+    const lines=c.trim().split("\n");
+
+    // 只追加新消息
+    if(lines.length>lastLoadedCount){
+      for(let i=lastLoadedCount;i<lines.length;i++){
+        const m=lines[i].match(/^- \[(\d{2}:\d{2})\] \[(.+?)\]: (.+)$/);
+        if(m)showMsg(m[2],m[3],m[1],false);
+      }
+      lastLoadedCount=lines.length;
+    }
+  }catch(e){
+    // 静默失败，不打扰用户
+  }
+}
 // ====== 显示消息 ======
 function showMsg(nick,text,time,isMe){
   const div=document.createElement("div");
