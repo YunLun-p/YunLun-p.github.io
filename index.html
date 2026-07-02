@@ -5,43 +5,208 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chating...</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#1e1e1e;color:#fff;font-family:'Segoe UI',sans-serif;height:100vh;display:flex;justify-content:center;align-items:center}
+/* ====== 样式（保持你原来的，仅统一缩进）====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* ===== 登录/注册界面 ===== */
-.auth-box{width:340px;background:#2a2a2a;border-radius:14px;padding:32px 28px;box-shadow:0 0 30px rgba(0,0,0,.5);text-align:center}
-.auth-box h1{font-size:22px;margin-bottom:6px}
-.auth-box p{font-size:13px;color:#888;margin-bottom:20px}
-.auth-box input{width:100%;padding:10px 14px;margin-bottom:12px;border:none;border-radius:8px;background:#222;color:#fff;font-size:15px;text-align:center}
-.auth-box input:focus{outline:2px solid #0078d4}
-.auth-box button{width:100%;padding:10px;border:none;border-radius:8px;background:#0078d4;color:#fff;font-size:15px;cursor:pointer;font-weight:500;margin-bottom:10px}
-.auth-box button:hover{background:#005fa3}
-.auth-box .switch{font-size:13px;color:#888;cursor:pointer}
-.auth-box .switch:hover{color:#0078d4}
-.auth-box .err{color:#e74c3c;font-size:13px;margin-top:8px;min-height:20px}
+body {
+  background: #1e1e1e;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-/* ===== 聊天界面 ===== */
-.chat{width:95%;max-width:600px;height:90vh;background:#2a2a2a;border-radius:12px;display:none;flex-direction:column;overflow:hidden}
-.header{padding:14px;background:#333;text-align:center;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444}
-.header .title{font-size:17px}
-.header .user-info{font-size:13px;color:#aaa}
-.header button{font-size:12px;padding:4px 10px;background:#555;border:none;border-radius:6px;color:#fff;cursor:pointer}
-.msgs{flex:1;padding:12px;overflow:auto;background:#222;line-height:1.6}
-.msg{margin:6px 0;padding:6px 10px;border-radius:6px;max-width:85%;word-break:break-word}
-.me{background:#0078d4;margin-left:auto}
-.other{background:#444}
-.nick{font-size:12px;color:#aaa;margin-bottom:2px}
-.input{display:flex;padding:10px;gap:8px;background:#333;border-top:1px solid #444}
-input{flex:1;padding:8px 12px;border:none;border-radius:6px;background:#222;color:#fff;font-size:14px}
-button.send{padding:8px 16px;background:#0078d4;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px}
-button.send:hover{background:#005fa3}
-.msgs::-webkit-scrollbar{width:5px}
-.msgs::-webkit-scrollbar-thumb{background:#555;border-radius:3px}
+.auth-box {
+  width: 340px;
+  background: #2a2a2a;
+  border-radius: 14px;
+  padding: 32px 28px;
+  box-shadow: 0 0 30px rgba(0,0,0,.5);
+  text-align: center;
+}
+
+.auth-box h1 {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.auth-box p {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #222;
+  color: #fff;
+  font-size: 15px;
+  text-align: center;
+}
+
+.auth-box input:focus {
+  outline: 2px solid #0078d4;
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #0078d4;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.auth-box button:hover {
+  background: #005fa3;
+}
+
+.auth-box .switch {
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+}
+
+.auth-box .switch:hover {
+  color: #0078d4;
+}
+
+.auth-box .err {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 8px;
+  min-height: 20px;
+}
+
+.chat {
+  width: 95%;
+  max-width: 600px;
+  height: 90vh;
+  background: #2a2a2a;
+  border-radius: 12px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  padding: 14px;
+  background: #333;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #444;
+}
+
+.header .title {
+  font-size: 17px;
+}
+
+.header .user-info {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.header button {
+  font-size: 12px;
+  padding: 4px 10px;
+  background: #555;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.msgs {
+  flex: 1;
+  padding: 12px;
+  overflow: auto;
+  background: #222;
+  line-height: 1.6;
+}
+
+.msg {
+  margin: 6px 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  max-width: 85%;
+  word-break: break-word;
+}
+
+.me {
+  background: #0078d4;
+  margin-left: auto;
+}
+
+.other {
+  background: #444;
+}
+
+.nick {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 2px;
+}
+
+.input {
+  display: flex;
+  padding: 10px;
+  gap: 8px;
+  background: #333;
+  border-top: 1px solid #444;
+}
+
+input {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #222;
+  color: #fff;
+  font-size: 14px;
+}
+
+button.send {
+  padding: 8px 16px;
+  background: #0078d4;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button.send:hover {
+  background: #005fa3;
+}
+
+.msgs::-webkit-scrollbar {
+  width: 5px;
+}
+
+.msgs::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 3px;
+}
 </style>
 </head>
 <body>
 
-<!-- 登录界面 -->
 <div class="auth-box" id="loginBox">
   <h1>💬 聊天室</h1>
   <p id="authTitle">请输入用户名和密码</p>
@@ -52,7 +217,6 @@ button.send:hover{background:#005fa3}
   <div class="err" id="authErr"></div>
 </div>
 
-<!-- 聊天界面 -->
 <div class="chat" id="chatBox">
   <div class="header">
     <div class="title">💬 聊天室</div>
@@ -70,176 +234,167 @@ button.send:hover{background:#005fa3}
 
 <script>
 // ====== 配置 ======
-const _t0="ghp_";      // ← 换成你的 Token 第一段
-const _t1="Z2BwhirqwbwHeY0";  // ← 第二段
-const _t2="Osk1ukEskSXnSUJ0PKWuu";  // ← 第三段
-const TOKEN=_t0+_t1+_t2;
-const REPO="YunLun-p/YunLun-p.github.io";
-const BRANCH="data";
-const DATA_DIR="Data";
-const USERS_DIR="Users";
-// ==================
+const _t0 = "ghp_";
+const _t1 = "Z2BwhirqwbwHeY0";
+const _t2 = "Osk1ukEskSXnSUJ0PKWuu";
+const TOKEN = _t0 + _t1 + _t2;
+const REPO = "YunLun-p/YunLun-p.github.io";
+const BRANCH = "data";
+const DATA_DIR = "Data";
+const USERS_DIR = "Users";
 
-const msgsDiv=document.getElementById("msgs");
-const textInput=document.getElementById("text");
-const authErr=document.getElementById("authErr");
+const msgsDiv = document.getElementById("msgs");
+const textInput = document.getElementById("text");
+const authErr = document.getElementById("authErr");
 
-// ====== 工具函数 ======
-function utoa(s){return btoa(unescape(encodeURIComponent(s)))}
-function atou(s){return decodeURIComponent(escape(atob(s)))}
+function utoa(s) {
+  return btoa(unescape(encodeURIComponent(s)));
+}
 
-// ====== 登录/注册模式切换 ======
-let isRegister=false;
+function atou(s) {
+  return decodeURIComponent(escape(atob(s)));
+}
 
-function toggleAuth(){
-  isRegister=!isRegister;
-  document.getElementById("authTitle").textContent=isRegister?"设置用户名和密码":"请输入用户名和密码";
-  document.getElementById("authBtn").textContent=isRegister?"注 册":"登 录";
-  document.querySelector(".switch").textContent=isRegister?"已有账号？点击登录":"没有账号？点击注册";
-  authErr.textContent="";
+// ====== 登录 / 注册切换 ======
+let isRegister = false;
+
+function toggleAuth() {
+  isRegister = !isRegister;
+
+  document.getElementById("authTitle").textContent =
+    isRegister ? "设置用户名和密码" : "请输入用户名和密码";
+
+  document.getElementById("authBtn").textContent =
+    isRegister ? "注 册" : "登 录";
+
+  document.querySelector(".switch").textContent =
+    isRegister ? "已有账号？点击登录" : "没有账号？点击注册";
+
+  authErr.textContent = "";
 }
 
 // ====== 登录逻辑 ======
-async function doLogin(){
-  const user=document.getElementById("loginUser").value.trim();
-  const pass=document.getElementById("loginPass").value.trim();
-  if(!user||!pass){authErr.textContent="请输入用户名和密码";return}
+async function doLogin() {
+  const user = document.getElementById("loginUser").value.trim();
+  const pass = document.getElementById("loginPass").value.trim();
+
+  if (!user || !pass) {
+    authErr.textContent = "请输入用户名和密码";
+    return;
+  }
 
   try {
-    if(isRegister){
-      // ===== 注册 =====
-      // 1. 检查用户是否已存在
-      const checkUrl=`https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}?ref=${BRANCH}`;
-      const checkRes=await fetch(checkUrl,{
-        headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
+    if (isRegister) {
+      // 注册：检查用户名是否存在
+      const checkUrl = `https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}?ref=${BRANCH}`;
+      const checkRes = await fetch(checkUrl, {
+        headers: {
+          Authorization: `token ${TOKEN}`,
+          "User-Agent": "YunLun-Family-Chat"
+        }
       });
-      if(checkRes.status!==404){
-        authErr.textContent="用户名已存在，请换一个";
+
+      if (checkRes.status !== 404) {
+        authErr.textContent = "用户名已存在，请换一个";
         return;
       }
 
-      // 2. 创建 Password.md
-      const passUrl=`https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}/Password.md`;
-      const createRes=await fetch(passUrl,{
-        method:"PUT",
-        headers:{Authorization:`token ${TOKEN}`,"Content-Type":"application/json","User-Agent":"YunLun-Family-Chat"},
-        body:JSON.stringify({
-          message:`register ${user}`,
-          content:utoa(pass),
-          branch:BRANCH
+      // 创建用户密码文件
+      const passUrl = `https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}/Password.md`;
+      const createRes = await fetch(passUrl, {
+        method: "PUT",
+        headers: {
+          Authorization: `token ${TOKEN}`,
+          "Content-Type": "application/json",
+          "User-Agent": "YunLun-Family-Chat"
+        },
+        body: JSON.stringify({
+          message: `register ${user}`,
+          content: utoa(pass),
+          branch: BRANCH
         })
       });
 
-      if(!createRes.ok){
-        authErr.textContent="注册失败，请稍后重试";
-        console.error(await createRes.text());
+      if (!createRes.ok) {
+        authErr.textContent = "注册失败，请稍后重试";
         return;
       }
 
-      authErr.style.color="#2ecc71";
-      authErr.textContent="注册成功！正在跳转…";
-      // 自动登录
-      sessionStorage.setItem("chat_user",user);
-      setTimeout(()=>showChat(user),500);
-    }else{
-      // ===== 登录 =====
-      const url=`https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}/Password.md?ref=${BRANCH}`;
-      const res=await fetch(url,{
-        headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
+      authErr.style.color = "#2ecc71";
+      authErr.textContent = "注册成功！正在跳转…";
+      sessionStorage.setItem("chat_user", user);
+      setTimeout(() => showChat(user), 500);
+    } else {
+      // 登录
+      const url = `https://api.github.com/repos/${REPO}/contents/${USERS_DIR}/${user}/Password.md?ref=${BRANCH}`;
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `token ${TOKEN}`,
+          "User-Agent": "YunLun-Family-Chat"
+        }
       });
 
-      if(res.status===404){
-        authErr.textContent="用户不存在";
+      if (res.status === 404) {
+        authErr.textContent = "用户不存在";
         return;
       }
 
-      const data=await res.json();
-      const savedPass=atou(data.content).trim();
+      const data = await res.json();
+      const savedPass = atou(data.content).trim();
 
-      if(savedPass!==pass){
-        authErr.textContent="密码错误";
+      if (savedPass !== pass) {
+        authErr.textContent = "密码错误";
         return;
       }
 
-      sessionStorage.setItem("chat_user",user);
+      sessionStorage.setItem("chat_user", user);
       showChat(user);
     }
-  }catch(e){
-    authErr.textContent="操作失败，请检查网络";
+  } catch (e) {
+    authErr.textContent = "操作失败，请检查网络";
     console.error(e);
   }
 }
 
-function doLogout(){
+function doLogout() {
   sessionStorage.removeItem("chat_user");
   location.reload();
 }
 
-function showChat(user){
-  document.getElementById("loginBox").style.display="none";
-  document.getElementById("chatBox").style.display="flex";
-  document.getElementById("curUser").textContent=user;
+// ====== 聊天主界面 ======
+function showChat(user) {
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("chatBox").style.display = "flex";
+  document.getElementById("curUser").textContent = user;
+
   loadToday();
 
-  // ✅ 初始化消息条数
-  setTimeout(()=>{
-    const msgs=document.querySelectorAll(".msg");
-    lastLoadedCount=msgs.length;
-  },300);
+  setTimeout(() => {
+    const msgs = document.querySelectorAll(".msg");
+    lastLoadedCount = msgs.length;
+  }, 300);
 
-  // ✅ 每 8 秒拉一次新消息
-  setInterval(pollMessages,1000);
+  setInterval(pollMessages, 1000);
 }
 
-// 支持回车
-document.addEventListener("keydown",function(e){
-  if(e.key==="Enter"&&document.getElementById("loginBox").style.display!=="none"){
+document.addEventListener("keydown", function (e) {
+  if (
+    e.key === "Enter" &&
+    document.getElementById("loginBox").style.display !== "none"
+  ) {
     doLogin();
   }
 });
 
-// ====== 加载聊天记录 ======
-async function loadToday(){
-  const u=sessionStorage.getItem("chat_user");
-  if(!u)return;
-  const now=new Date();
-  const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
-  const path=`${DATA_DIR}/${y}/${m}/${d}.md`;
-  const url=`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
-
-  try {
-    const res=await fetch(url,{
-      headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
-    });
-    if(res.status===404)return;
-    const j=await res.json();
-    const c=atou(j.content);
-    c.split("\n").forEach(l=>{
-      const m=l.match(/^- \[(\d{2}:\d{2})\] \[(.+?)\]: (.+)$/);
-      if(m)showMsg(m[2],m[3],m[1],false);
-    });
-    msgsDiv.scrollTop=msgsDiv.scrollHeight;
-    // ✅ 同步消息条数，防止轮询重复追加
-    const msgs=document.querySelectorAll(".msg");
-    lastLoadedCount=msgs.length;
-  }catch(e){console.error("加载失败",e)}
-}
-// ====== 定时拉取新消息 ======
-let lastLoadedCount = 0;   // 当前页面已渲染的消息条数
-let pollLock = false;       // 防止并发轮询
-
-async function pollMessages() {
+// ====== 加载当日聊天记录 ======
+async function loadToday() {
   const u = sessionStorage.getItem("chat_user");
   if (!u) return;
 
-  // ✅ 防并发：上一次轮询未完成，直接跳过
-  if (pollLock) return;
-  pollLock = true;
-
   const now = new Date();
-  const y = now.getFullYear(),
-        m = now.getMonth() + 1,
-        d = now.getDate();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
   const path = `${DATA_DIR}/${y}/${m}/${d}.md`;
   const url = `https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
 
@@ -251,96 +406,277 @@ async function pollMessages() {
       }
     });
 
-    // 今天还没有聊天记录，直接返回
+    if (res.status === 404) return;
+
+    const j = await res.json();
+    const c = atou(j.content);
+
+    c.split("\n").forEach(l => {
+      const m = l.match(/^- \[(\d{2}:\d{2})\] \[(.+?)\]: (.+)$/);
+      if (m) {
+        showMsg(m[2], m[3], m[1], false);
+      }
+    });
+
+    msgsDiv.scrollTop = msgsDiv.scrollHeight;
+
+    const msgs = document.querySelectorAll(".msg");
+    lastLoadedCount = msgs.length;
+  } catch (e) {
+    console.error("加载失败", e);
+  }
+}
+
+// ====== 轮询新消息 ======
+let lastLoadedCount = 0;
+let pollLock = false;
+
+async function pollMessages() {
+  const u = sessionStorage.getItem("chat_user");
+  if (!u || pollLock) return;
+
+  pollLock = true;
+
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const path = `${DATA_DIR}/${y}/${m}/${d}.md`;
+  const url = `https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
+
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `token ${TOKEN}`,
+        "User-Agent": "YunLun-Family-Chat"
+      }
+    });
+
     if (res.status === 404) return;
 
     const j = await res.json();
     const c = atou(j.content);
     const lines = c.trim().split("\n");
 
-    // ✅ 只追加“新出现的消息”
     if (lines.length > lastLoadedCount) {
       for (let i = lastLoadedCount; i < lines.length; i++) {
         const m = lines[i].match(/^- \[(\d{2}:\d{2})\] \[(.+?)\]: (.+)$/);
         if (m) {
-          // false = 不把自己发的再滚到底部
           showMsg(m[2], m[3], m[1], false);
         }
       }
       lastLoadedCount = lines.length;
     }
+
+    // 清理发送中占位
+    document.querySelectorAll(".msg").forEach(div => {
+      if (div.innerHTML.includes("发送中")) {
+        div.remove();
+      }
+    });
   } catch (e) {
-    // ✅ 静默失败，不打扰用户
-    // console.error("轮询失败", e);
+    // 静默失败
   } finally {
-    pollLock = false; // ✅ 释放锁
+    pollLock = false;
   }
 }
-// ====== 显示消息 ======
-function showMsg(nick,text,time,isMe){
-  const div=document.createElement("div");
-  const cur=sessionStorage.getItem("chat_user");
-  div.className="msg "+(nick===cur?"me":"other");
-  div.innerHTML=`<div class="nick">${time} ${nick}</div>${text}`;
+
+// ====== 显示单条消息 ======
+function showMsg(nick, text, time, isMe) {
+  const div = document.createElement("div");
+  const cur = sessionStorage.getItem("chat_user");
+
+  div.className = "msg " + (nick === cur ? "me" : "other");
+  div.innerHTML = `<div class="nick">${time} ${nick}</div>${text}`;
   msgsDiv.appendChild(div);
-  if(isMe)msgsDiv.scrollTop=msgsDiv.scrollHeight;
+
+  if (isMe) {
+    msgsDiv.scrollTop = msgsDiv.scrollHeight;
+  }
 }
 
 // ====== 发送消息 ======
-async function send(){
-  const u=sessionStorage.getItem("chat_user");
-  if(!u)return;
+async function send() {
+  const u = sessionStorage.getItem("chat_user");
+  if (!u) return;
 
-  const btn=document.getElementById("sendBtn");
-  if(btn.disabled)return;
+  const btn = document.getElementById("sendBtn");
+  if (btn.disabled) return;
 
-  const txt=textInput.value.trim();
-  if(!txt)return;
+  const txt = textInput.value.trim();
+  if (!txt) return;
 
-  btn.disabled=true;
-  btn.textContent="发送中…";
+  btn.disabled = true;
+  btn.textContent = "发送中…";
 
-  const now=new Date();
-  const time=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
-  const line=`- [${time}] [${u}]: ${txt}\n`;
-  showMsg(u,txt,time,true);
-  textInput.value="";
+  const now = new Date();
+  const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  const line = `- [${time}] [${u}]: ${txt}\n`;
 
-  const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
-  const path=`${DATA_DIR}/${y}/${m}/${d}.md`;
-  const url=`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
+  // 发送中占位
+  const tempId = "temp-" + Date.now();
+  const tempDiv = document.createElement("div");
+  tempDiv.id = tempId;
+  tempDiv.className = "msg me";
+  tempDiv.innerHTML = `<div class="nick">${time} ${u}（发送中…）</div>${txt}`;
+  tempDiv.style.opacity = "0.6";
+  msgsDiv.appendChild(tempDiv);
+  msgsDiv.scrollTop = msgsDiv.scrollHeight;
+
+  textInput.value = "";
+
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const path = `${DATA_DIR}/${y}/${m}/${d}.md`;
+  const url = `https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
+
+  let retry = 0;
+  const MAX_RETRY = 3;
 
   try {
-    const res=await fetch(url,{
-      headers:{Authorization:`token ${TOKEN}`,"User-Agent":"YunLun-Family-Chat"}
-    });
-    let sha=null,content=line;
-    if(res.status!==404){
-      const j=await res.json();
-      sha=j.sha;
-      content=atou(j.content)+line;
-    }
-    const putRes=await fetch(url,{
-      method:"PUT",
-      headers:{Authorization:`token ${TOKEN}`,"Content-Type":"application/json","User-Agent":"YunLun-Family-Chat"},
-      body:JSON.stringify({message:`chat ${y}/${m}/${d} ${time}`,content:utoa(content),sha,branch:BRANCH})
+    // 读取当前文件
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `token ${TOKEN}`,
+        "User-Agent": "YunLun-Family-Chat"
+      }
     });
 
-    if(!putRes.ok){
-      throw new Error("GitHub API 写入失败");
+    let sha = null;
+    let content = line;
+
+    if (res.status !== 404) {
+      const j = await res.json();
+      sha = j.sha;
+      content = atou(j.content) + line;
     }
-  }catch(e){
+
+    // 写入（含 409 重试）
+    while (retry <= MAX_RETRY) {
+      try {
+        const putRes = await fetch(url, {
+          method: "PUT",
+          headers: {
+            Authorization: `token ${TOKEN}`,
+            "Content-Type": "application/json",
+            "User-Agent": "YunLun-Family-Chat"
+          },
+          body: JSON.stringify({
+            message: `chat ${y}/${m}/${d} ${time}`,
+            content: utoa(content),
+            sha: sha,
+            branch: BRANCH
+          })
+        });
+
+        if (putRes.ok) {
+          writeLog("INFO", `消息发送成功 user=${u}`);
+          break;
+        }
+
+        if (putRes.status === 409 && retry < MAX_RETRY) {
+          writeLog("WARN", `SHA冲突 user=${u} retry=${retry + 1}`);
+
+          const r = await fetch(url, {
+            headers: {
+              Authorization: `token ${TOKEN}`,
+              "User-Agent": "YunLun-Family-Chat"
+            }
+          });
+
+          if (r.status !== 404) {
+            const j = await r.json();
+            sha = j.sha;
+            content = atou(j.content) + line;
+          }
+
+          retry++;
+          continue;
+        }
+
+        const errText = await putRes.text();
+        writeLog(
+          "ERROR",
+          `发送失败 user=${u} status=${putRes.status} msg=${errText.substring(0, 80)}`
+        );
+        throw new Error("GitHub API 写入失败");
+      } catch (e) {
+        if (retry >= MAX_RETRY) throw e;
+        retry++;
+      }
+    }
+  } catch (e) {
+    const temp = document.getElementById(tempId);
+    if (temp) {
+      temp.style.opacity = "1";
+      temp.style.background = "#c0392b";
+      temp.innerHTML = `<div class="nick">${time} ${u}（发送失败）</div>${txt}`;
+      temp.removeAttribute("id");
+    }
+
+    writeLog("ERROR", `发送异常 user=${u} msg=${e.message}`);
     alert("发送失败，请检查网络或稍后重试");
-    console.error("发送失败",e);
-  }finally{
-    btn.disabled=false;
-    btn.textContent="发送";
+    console.error("发送失败", e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "发送";
+  }
+}
+
+// ====== 日志系统 ======
+async function writeLog(level, msg) {
+  const logPath = `${DATA_DIR}/log.md`;
+  const logUrl = `https://api.github.com/repos/${REPO}/contents/${logPath}?ref=${BRANCH}`;
+
+  try {
+    const ts = new Date();
+    const tsStr =
+      `${ts.getFullYear()}-${String(ts.getMonth() + 1).padStart(2, "0")}-${String(ts.getDate()).padStart(2, "0")} ` +
+      `${String(ts.getHours()).padStart(2, "0")}:${String(ts.getMinutes()).padStart(2, "0")}:${String(ts.getSeconds()).padStart(2, "0")}`;
+
+    const logLine = `[${tsStr}] [${level}] ${msg}\n`;
+
+    const r = await fetch(logUrl, {
+      headers: {
+        Authorization: `token ${TOKEN}`,
+        "User-Agent": "YunLun-Family-Chat"
+      }
+    });
+
+    let sha = null;
+    let content = logLine;
+
+    if (r.status !== 404) {
+      const j = await r.json();
+      sha = j.sha;
+      content = atou(j.content) + logLine;
+    }
+
+    await fetch(logUrl, {
+      method: "PUT",
+      headers: {
+        Authorization: `token ${TOKEN}`,
+        "Content-Type": "application/json",
+        "User-Agent": "YunLun-Family-Chat"
+      },
+      body: JSON.stringify({
+        message: `log ${level}`,
+        content: utoa(content),
+        sha: sha,
+        branch: BRANCH
+      })
+    });
+  } catch (e) {
+    // 日志失败不打扰用户
   }
 }
 
 // ====== 自动登录 ======
-const savedUser=sessionStorage.getItem("chat_user");
-if(savedUser){showChat(savedUser);}
+const savedUser = sessionStorage.getItem("chat_user");
+if (savedUser) {
+  showChat(savedUser);
+}
 </script>
 </body>
 </html>
